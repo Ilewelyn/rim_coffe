@@ -1,0 +1,79 @@
+# Compila la APK de Rim Coffee en GitHub cada vez que subes cambios a main
+# (o a mano desde la pestaña Actions → "Compilar APK" → Run workflow).
+# La APK queda en: Actions → la ejecución → Artifacts, y también en Releases.
+name: Compilar APK
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Generar carpetas de Android y web
+        run: |
+          flutter create --platforms=android,web --org com.rimcoffee --project-name rim_coffee .
+          cp tool/pubspec_template.yaml pubspec.yaml
+          cp tool/main_template.dart lib/main.dart
+          rm -f test/widget_test.dart
+
+      - name: Ajustes de Android (nombre, permisos, notificaciones)
+        run: |
+          python3 tool/preparar_android.py
+          grep -n "uses-permission\|receiver" android/app/src/main/AndroidManifest.xml
+          grep -n "Desugaring\|desugar" android/app/build.gradle* || true
+
+      - name: Llave de firma fija (para que la huella SHA-1 no cambie)
+        run: |
+          mkdir -p ~/.android
+          cp tool/firma/debug.keystore ~/.android/debug.keystore
+
+      - name: Paquetes
+        run: flutter pub get
+
+      - name: Ícono de la app
+        run: dart run flutter_launcher_icons
+
+      - name: Revisión del código
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+
+      - name: Pruebas
+        run: flutter test
+
+      - name: Compilar APK
+        run: flutter build apk --release
+
+      - name: Renombrar APK
+        run: cp build/app/outputs/flutter-apk/app-release.apk rim-coffee.apk
+
+      - name: Guardar APK (Artifacts)
+        uses: actions/upload-artifact@v4
+        with:
+          name: rim-coffee-apk
+          path: rim-coffee.apk
+
+      - name: Publicar en Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-${{ github.run_number }}
+          name: Rim Coffee (compilación ${{ github.run_number }})
+          body: APK lista para instalar en Android. Descárgala abajo en "Assets".
+          files: rim-coffee.apk

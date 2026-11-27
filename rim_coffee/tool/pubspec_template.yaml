@@ -1,0 +1,70 @@
+name: rim_coffee
+description: Rim Coffee - tablet de mostrador para cafeterías (base de datos en la nube con Supabase y copia local SQLite, usuarios con código, pedidos por mesa, cobro y reportes).
+publish_to: 'none'
+version: 5.1.0+7
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  shared_preferences: ^2.3.0
+  image_picker: ^1.1.2
+  path_provider: ^2.1.4
+  crypto: ^3.0.3
+  google_sign_in: ">=6.2.1 <7.0.0"
+  sqflite: ^2.3.3
+  path: ^1.8.0
+  supabase_flutter: ^2.8.0
+  pdf: ^3.11.1
+  printing: ^5.13.4
+  flutter_local_notifications: ^19.0.0
+  timezone: ">=0.10.0 <0.11.0"
+
+# image 4.11 no es compatible con archive 4.0.x (lo traen pdf y el generador
+# del ícono); se fija una versión que funciona con ambos.
+dependency_overrides:
+  image: 4.5.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.14.1
+
+# Ícono de la app (se genera con: dart run flutter_launcher_icons)
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/images/logo/logo.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/logo/icono_frente.png"
+  min_sdk_android: 21
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/logo/
+    - assets/images/branding/
+    - assets/images/categorias/
+    - assets/images/productos/
+    - assets/images/perfil/
+
+  fonts:
+    - family: DMSerifDisplay
+      fonts:
+        - asset: assets/fonts/DMSerifDisplay-Regular.ttf
+        - asset: assets/fonts/DMSerifDisplay-Italic.ttf
+          style: italic
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Poppins-ExtraBold.ttf
+          weight: 800

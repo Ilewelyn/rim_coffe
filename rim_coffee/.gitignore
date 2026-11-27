@@ -1,0 +1,17 @@
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+pubspec.lock
+coverage/
+*.iml
+.idea/
+.DS_Store
+
+# Carpetas que genera "flutter create" (setup.bat o GitHub Actions)
+/android/
+/web/
+/rim-coffee.apk

@@ -1,0 +1,4 @@
+
+subprojects {
+    tasks.matching { it.name.contains("lintVital") }.configureEach { enabled = false }
+}
